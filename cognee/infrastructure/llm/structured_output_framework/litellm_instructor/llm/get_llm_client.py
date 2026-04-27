@@ -36,6 +36,7 @@ class LLMProvider(Enum):
     AZURE = "azure"
     BEDROCK = "bedrock"
     LLAMA_CPP = "llama_cpp"
+    CLAUDE_CODE = "claude_code"
 
 
 def get_llm_client(raise_api_key_error: bool = True):
@@ -244,5 +245,16 @@ def get_llm_client(raise_api_key_error: bool = True):
             chat_format=chat_format,
             llm_args=llm_args,
         )
+    elif provider == LLMProvider.CLAUDE_CODE:
+        from cognee.infrastructure.llm.structured_output_framework.litellm_instructor.llm.claude_code.adapter import (
+            ClaudeCodeAdapter,
+        )
+
+        return ClaudeCodeAdapter(
+            model=llm_config.llm_model,
+            max_completion_tokens=max_completion_tokens,
+            llm_args=llm_args,
+        )
+
     else:
         raise UnsupportedLLMProviderError(provider)
